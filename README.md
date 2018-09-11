@@ -30,3 +30,11 @@ Premissas:
 
 Monitoramento:
     - Importante mostrar o estado do simulador no instante de tempo
+
+Relatório:
+    - Objetivo
+    - Premissas
+    - Saída de uma simulação
+
+Apresentação:
+    - 20 minutos
