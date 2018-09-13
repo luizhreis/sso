@@ -11,3 +11,7 @@ struct ProcessManager *createProcessManager(){
 
     return p;
 }
+
+int generatePid(int currentPid){
+    return currentPid++;
+}
