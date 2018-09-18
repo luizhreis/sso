@@ -8,12 +8,20 @@
 const int maxProcess = 1024;
 
 int main(){
-    struct Process *process = createProcess(100, 0, 0, 1.5);
-
     struct ProcessManager *manager = createProcessManager();
     manager->highPriorityQueue = createQueue();
     manager->lowPriorityQueue = createQueue();
     manager->ioQueue = createQueue();
+
+    // struct Process *proc1 = generateProcess(manager->nextPid, 0, 0, 10);
+    printf("PID ATUAL: %d", manager->nextPid);
+    struct Process *proc1 = createProcess(manager->nextPid, 0, 0, 10);
+    manager->nextPid = generateNextPid(manager->nextPid);
+    printf("PID ATUAL: %d", manager->nextPid);
+    enQueue(manager->highPriorityQueue, proc1->pid);
+    struct Process *proc2 = createProcess(manager->nextPid, 0, 0, 10);
+    manager->nextPid = generateNextPid(manager->nextPid);
+    enQueue(manager->highPriorityQueue, proc2->pid);
 
     printf("lista vazia: %d\n", isEmpty(manager->highPriorityQueue));
     enQueue(manager->highPriorityQueue, 10);
@@ -33,7 +41,8 @@ int main(){
     enQueue(manager->highPriorityQueue, 50);
     show(manager->highPriorityQueue);
 
-    printf("PID: %d, QUANTUM: %f\n", process->pid, process->quantum);
+    printf("PID: %d, QUANTUM: %f\n", proc1->pid, proc1->quantum);
+    printf("PID: %d, QUANTUM: %f\n", proc2->pid, proc2->quantum);
 
     struct Node *n = deQueue(manager->highPriorityQueue);
     if(n != NULL)
