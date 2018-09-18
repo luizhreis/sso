@@ -1,6 +1,6 @@
 struct ProcessManager{
     int nextPid;
-    void *processArray;
+    struct Process *(processList[1024]);
     struct Queue *highPriorityQueue;
     struct Queue *lowPriorityQueue;
     struct Queue *ioQueue;

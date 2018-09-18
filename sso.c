@@ -7,35 +7,47 @@
 
 const int maxProcess = 1024;
 
-int main(){
-    struct ProcessManager *manager = createProcessManager();
+void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
     manager->lowPriorityQueue = createQueue();
     manager->ioQueue = createQueue();
+}
 
-    // struct Process *processList = (struct Process*)malloc(sizeof(struct Process)*maxProcess);
-    struct Process *(processList[maxProcess]);
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int quantum){
+    struct Process *process = createProcess(manager->nextPid, ppid, priority, quantum);
+    manager->processList[manager->nextPid] = process;
+    enQueue(manager->highPriorityQueue, process->pid);
+    manager->nextPid = generateNextPid(manager->nextPid);
+}
+
+int main(){
+    // struct Process *(processList[maxProcess]);
     struct Process *tmpProc;
     struct Process *teste;
+    struct ProcessManager *manager = createProcessManager();
+
+    initiateProcessManager(manager);
+    generateProcess(manager, 0, 0, 10);
+    generateProcess(manager, 0, 0, 20);
 
     // struct Process *proc1 = generateProcess(manager->nextPid, 0, 0, 10);
-    printf("PID ATUAL: %d", manager->nextPid);
-    tmpProc = createProcess(manager->nextPid, 0, 0, 10);
-    processList[manager->nextPid] = tmpProc;
+    // printf("PID ATUAL: %d", manager->nextPid);
+    // tmpProc = createProcess(manager->nextPid, 0, 0, 10);
+    // processList[manager->nextPid] = tmpProc;
 
-    teste = processList[0];
-    printf("\nTESTE: %d", teste->pid);
+    teste = manager->processList[0];
+    printf("TESTE: %d\n", teste->pid);
 
-    manager->nextPid = generateNextPid(manager->nextPid);
-    printf("PID ATUAL: %d", manager->nextPid);
-    enQueue(manager->highPriorityQueue, tmpProc->pid);
-    tmpProc = createProcess(manager->nextPid, 0, 0, 10);
-    processList[manager->nextPid] = tmpProc;
-    manager->nextPid = generateNextPid(manager->nextPid);
-    enQueue(manager->highPriorityQueue, tmpProc->pid);
+    // manager->nextPid = generateNextPid(manager->nextPid);
+    // printf("PID ATUAL: %d", manager->nextPid);
+    // enQueue(manager->highPriorityQueue, tmpProc->pid);
+    // tmpProc = createProcess(manager->nextPid, 0, 0, 10);
+    // processList[manager->nextPid] = tmpProc;
+    // manager->nextPid = generateNextPid(manager->nextPid);
+    // enQueue(manager->highPriorityQueue, tmpProc->pid);
 
-    teste = processList[1];
-    printf("\nTESTE: %d", teste->pid);
+    teste = manager->processList[1];
+    printf("TESTE: %d\n", teste->pid);
 
     printf("lista vazia: %d\n", isEmpty(manager->highPriorityQueue));
     enQueue(manager->highPriorityQueue, 10);
