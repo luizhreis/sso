@@ -66,6 +66,7 @@ int main(){
         }
         if(processRunning->quantum == 0){
             free(processRunning);
+            manager->processList[pidRunning->data] = NULL;
             processRunning = NULL;
             pidRunning = NULL;
             partialTime = 0;
