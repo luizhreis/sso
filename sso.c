@@ -5,8 +5,6 @@
 #include "fifoQueues.h"
 #include "process.h"
 
-const int maxProcess = 1024;
-
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
     manager->lowPriorityQueue = createQueue();
@@ -21,33 +19,70 @@ void generateProcess(struct ProcessManager *manager, int ppid, int priority, int
 }
 
 int main(){
+    const unsigned int maxProcess = 1024;
+    const unsigned int timeSlice = 4;
+    const unsigned int executionTimeLimit = 10000;
+    int unsigned executionTime = 0;
+    int unsigned partialTime = 0;
     // struct Process *(processList[maxProcess]);
     struct Process *tmpProc;
     struct Process *teste;
+    struct Node *pidRunning = NULL;
+    struct Process *processRunning;
     struct ProcessManager *manager = createProcessManager();
 
     initiateProcessManager(manager);
-    generateProcess(manager, 0, 0, 10);
-    generateProcess(manager, 0, 0, 20);
 
-    // struct Process *proc1 = generateProcess(manager->nextPid, 0, 0, 10);
-    // printf("PID ATUAL: %d", manager->nextPid);
-    // tmpProc = createProcess(manager->nextPid, 0, 0, 10);
-    // processList[manager->nextPid] = tmpProc;
+    generateProcess(manager, 0, 0, 10);
+    show(manager->highPriorityQueue);
+    show(manager->lowPriorityQueue);
+    generateProcess(manager, 0, 0, 20);
+    show(manager->highPriorityQueue);
+    show(manager->lowPriorityQueue);
 
     teste = manager->processList[0];
     printf("TESTE: %d\n", teste->pid);
-
-    // manager->nextPid = generateNextPid(manager->nextPid);
-    // printf("PID ATUAL: %d", manager->nextPid);
-    // enQueue(manager->highPriorityQueue, tmpProc->pid);
-    // tmpProc = createProcess(manager->nextPid, 0, 0, 10);
-    // processList[manager->nextPid] = tmpProc;
-    // manager->nextPid = generateNextPid(manager->nextPid);
-    // enQueue(manager->highPriorityQueue, tmpProc->pid);
-
     teste = manager->processList[1];
     printf("TESTE: %d\n", teste->pid);
+
+    while(executionTime < executionTimeLimit){
+        if(!pidRunning){
+            if(!isEmpty(manager->highPriorityQueue)){
+                pidRunning = deQueue(manager->highPriorityQueue);
+                processRunning = manager->processList[pidRunning->data];
+                processRunning->state = 1;
+            }
+            else if(!isEmpty(manager->lowPriorityQueue)){
+                pidRunning = deQueue(manager->lowPriorityQueue);
+                processRunning = manager->processList[pidRunning->data];
+                processRunning->state = 1;
+            }
+            
+        }
+        if(processRunning != NULL){
+            processRunning->quantum -= 1;
+            // printf("QUANTUM TIME: %d\n", processRunning->quantum);
+            partialTime++;
+        }
+        if(processRunning->quantum == 0){
+            free(processRunning);
+            processRunning = NULL;
+            pidRunning = NULL;
+            partialTime = 0;
+        }
+        else if(processRunning->quantum > 0 && timeSlice == partialTime ){
+            enQueue(manager->lowPriorityQueue, processRunning->pid);
+            pidRunning = NULL;
+            partialTime = 0;
+        }
+        show(manager->highPriorityQueue);
+        show(manager->lowPriorityQueue);
+        executionTime++;
+        getchar();
+    }
+
+    printf("\n\n\n");
+
 
     printf("lista vazia: %d\n", isEmpty(manager->highPriorityQueue));
     enQueue(manager->highPriorityQueue, 10);
