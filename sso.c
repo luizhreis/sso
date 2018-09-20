@@ -28,6 +28,7 @@ int main(){
     struct Process *tmpProc;
     struct Process *teste;
     struct Node *pidRunning = NULL;
+    struct Node *ioRunning = NULL;
     struct Process *processRunning;
     struct ProcessManager *manager = createProcessManager();
 
@@ -73,11 +74,13 @@ int main(){
         }
         else if(processRunning->burstTime > 0 && timeSlice == partialTime ){
             enQueue(manager->lowPriorityQueue, processRunning->pid);
+            processRunning->state = 0;
             pidRunning = NULL;
             partialTime = 0;
         }
         show(manager->highPriorityQueue);
         show(manager->lowPriorityQueue);
+        show(manager->ioQueue);
         executionTime++;
         getchar();
     }
