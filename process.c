@@ -4,6 +4,8 @@ struct Process{
     int state;
     int priority;
     int burstTime;
+    int arrivalTime;
+    int finishTime;
 };
 
 struct Proccess *createProcess(int pid, int ppid, int priority, int burstTime){
