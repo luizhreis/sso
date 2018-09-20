@@ -11,8 +11,8 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioQueue = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int quantum){
-    struct Process *process = createProcess(manager->nextPid, ppid, priority, quantum);
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int burstTime){
+    struct Process *process = createProcess(manager->nextPid, ppid, priority, burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
     manager->nextPid = generateNextPid(manager->nextPid);
@@ -60,18 +60,18 @@ int main(){
             
         }
         if(processRunning != NULL){
-            processRunning->quantum -= 1;
-            // printf("QUANTUM TIME: %d\n", processRunning->quantum);
+            processRunning->burstTime -= 1;
+            // printf("BURST TIME: %d\n", processRunning->burstTime);
             partialTime++;
         }
-        if(processRunning->quantum == 0){
+        if(processRunning->burstTime == 0){
             free(processRunning);
             manager->processList[pidRunning->data] = NULL;
             processRunning = NULL;
             pidRunning = NULL;
             partialTime = 0;
         }
-        else if(processRunning->quantum > 0 && timeSlice == partialTime ){
+        else if(processRunning->burstTime > 0 && timeSlice == partialTime ){
             enQueue(manager->lowPriorityQueue, processRunning->pid);
             pidRunning = NULL;
             partialTime = 0;
@@ -103,8 +103,8 @@ int main(){
     enQueue(manager->highPriorityQueue, 50);
     show(manager->highPriorityQueue);
 
-    // printf("PID: %d, QUANTUM: %f\n", proc1->pid, proc1->quantum);
-    // printf("PID: %d, QUANTUM: %f\n", proc2->pid, proc2->quantum);
+    // printf("PID: %d, BURST TIME: %f\n", proc1->pid, proc1->burstTime);
+    // printf("PID: %d, BURST TIME: %f\n", proc2->pid, proc2->burstTime);
 
     struct Node *n = deQueue(manager->highPriorityQueue);
     if(n != NULL)

@@ -18,7 +18,7 @@ int generateNextPid(int currentPid){
     return ++currentPid;
 }
 
-// struct Process* generateProcess(int pid, int ppid, int priority, int quantum){
-//     struct Process *process = createProcess(pid, ppid, priority, quantum);
+// struct Process* generateProcess(int pid, int ppid, int priority, int burstTime){
+//     struct Process *process = createProcess(pid, ppid, priority, burstTime);
 //     return process;
 // }
