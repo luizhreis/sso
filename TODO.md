@@ -1,6 +1,6 @@
-1. Geração de processos especificado em arquivo. Cada linha do arquivo contém:
-    1. o instante de criação
-    2. a prioridade
+1. ~Geração de processos especificado em arquivo. Cada linha do arquivo contém:~
+    1. ~o instante de criação~
+    2. ~a prioridade~
 1. Arquivo com a lista dos processos criados
     1. o instante de tempo da criação na simulação
     2. pid alocado
