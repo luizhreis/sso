@@ -1,6 +1,7 @@
 // A linked list (LL) node to store a queue entry
 struct Node{
     int data;
+    int priority;
     struct Node *next;
 };
  
@@ -27,7 +28,7 @@ struct Queue *createQueue(){
 }
 
 // The function to add a key k to q
-void enQueue(struct Queue *q, int k){
+struct Node *enQueue(struct Queue *q, int k){
     // Create a new LL node
     struct Node *temp = newNode(k);
  
@@ -35,12 +36,14 @@ void enQueue(struct Queue *q, int k){
     if (q->last == NULL)
     {
        q->first = q->last = temp;
-       return;
+       return temp;
     }
  
     // Add the new node at the end of queue and change rear
     q->last->next = temp;
     q->last = temp;
+
+    return temp;
 }
  
 // Function to remove a key from given queue q

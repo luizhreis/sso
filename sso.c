@@ -4,6 +4,7 @@
 #include "processManager.h"
 #include "fifoQueues.h"
 #include "process.h"
+#include "parseInputFile.h"
 
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
@@ -29,24 +30,37 @@ int main(){
     struct Process *teste;
     struct Node *pidRunning = NULL;
     struct Node *ioRunning = NULL;
+    struct Node *newProcessCreation = NULL;
     struct Process *processRunning;
     struct ProcessManager *manager = createProcessManager();
+    struct Queue *processCreation = createQueue();
+
+    parseProcessFile("process.txt", processCreation);
+    show(processCreation);
 
     initiateProcessManager(manager);
 
-    generateProcess(manager, 0, 0, 10);
-    show(manager->highPriorityQueue);
-    show(manager->lowPriorityQueue);
-    generateProcess(manager, 0, 0, 20);
+    // generateProcess(manager, 0, 0, 10);
+    // show(manager->highPriorityQueue);
+    // show(manager->lowPriorityQueue);
+    // generateProcess(manager, 0, 0, 20);
     show(manager->highPriorityQueue);
     show(manager->lowPriorityQueue);
 
-    teste = manager->processList[0];
-    printf("TESTE: %d\n", teste->pid);
-    teste = manager->processList[1];
-    printf("TESTE: %d\n", teste->pid);
+    // teste = manager->processList[0];
+    // printf("TESTE: %d\n", teste->pid);
+    // teste = manager->processList[1];
+    // printf("TESTE: %d\n", teste->pid);
 
+    newProcessCreation = deQueue(processCreation);
+    printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
     while(executionTime < executionTimeLimit){
+            while(newProcessCreation != NULL && newProcessCreation->data == executionTime){
+                printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
+                generateProcess(manager, 0, newProcessCreation->priority, 10);
+                free(newProcessCreation);
+                newProcessCreation = deQueue(processCreation);
+            }
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
                 pidRunning = deQueue(manager->highPriorityQueue);
