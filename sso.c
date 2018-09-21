@@ -12,8 +12,9 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioQueue = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int burstTime){
-    struct Process *process = createProcess(manager->nextPid, ppid, priority, burstTime);
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime){
+    struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
+    printf("PROCESS CREATED: pid = %d, priority = %d, arrival time = %d, execution time = %d\n", process->pid, process->priority, process->arrivalTime, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
     manager->nextPid = generateNextPid(manager->nextPid);
@@ -22,9 +23,9 @@ void generateProcess(struct ProcessManager *manager, int ppid, int priority, int
 int main(){
     const unsigned int maxProcess = 1024;
     const unsigned int timeSlice = 4;
-    const unsigned int executionTimeLimit = 10000;
-    int unsigned executionTime = 0;
-    int unsigned partialTime = 0;
+    const unsigned int simulationTimeLimit = 10000;
+    unsigned int simulationTime = 0;
+    unsigned int partialTime = 0;
     // struct Process *(processList[maxProcess]);
     struct Process *tmpProc;
     struct Process *teste;
@@ -53,14 +54,15 @@ int main(){
     // printf("TESTE: %d\n", teste->pid);
 
     newProcessCreation = deQueue(processCreation);
-    printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
-    while(executionTime < executionTimeLimit){
-            while(newProcessCreation != NULL && newProcessCreation->data == executionTime){
-                printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
-                generateProcess(manager, 0, newProcessCreation->priority, 10);
-                free(newProcessCreation);
-                newProcessCreation = deQueue(processCreation);
-            }
+    // printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
+    while(simulationTime < simulationTimeLimit){
+        printf("SIMULATION TIME = %d\n", simulationTime);
+        while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
+            // printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
+            generateProcess(manager, 0, newProcessCreation->priority, simulationTime);
+            free(newProcessCreation);
+            newProcessCreation = deQueue(processCreation);
+        }
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
                 pidRunning = deQueue(manager->highPriorityQueue);
@@ -77,6 +79,7 @@ int main(){
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
             // printf("BURST TIME: %d\n", processRunning->burstTime);
+            printf("PROCESS RUNNING: pid = %d, priority = %d, execution time = %d\n", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
         }
         if(processRunning->burstTime == 0){
@@ -87,7 +90,12 @@ int main(){
             partialTime = 0;
         }
         else if(processRunning->burstTime > 0 && timeSlice == partialTime ){
-            enQueue(manager->lowPriorityQueue, processRunning->pid);
+            if(processRunning->priority == 0){
+                enQueue(manager->highPriorityQueue, processRunning->pid);
+            }
+            else{
+                enQueue(manager->lowPriorityQueue, processRunning->pid);
+            }
             processRunning->state = 0;
             pidRunning = NULL;
             partialTime = 0;
@@ -95,7 +103,7 @@ int main(){
         show(manager->highPriorityQueue);
         show(manager->lowPriorityQueue);
         show(manager->ioQueue);
-        executionTime++;
+        simulationTime++;
         getchar();
     }
 
