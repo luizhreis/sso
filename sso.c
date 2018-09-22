@@ -62,7 +62,7 @@ int main(){
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
             if(!newProcessCreation)
-                newProcessCreation = newNode(simulationTimeLimit + 1);
+                newProcessCreation = newNode(-1);//(simulationTimeLimit + 1);
         }
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
@@ -108,32 +108,13 @@ int main(){
         fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Queue:\t\t");
         show(manager->ioQueue);
         simulationTime++;
+
+        if(newProcessCreation->data == -1 && !pidRunning && isAllExecutionQueuesEmpty(manager) && isAllIOQueuesEmpty(manager)){
+            break;
+        }
         getchar();
     }
+    fprintf(stdout, C_BLUE "\n%s" C_RESET, "END OF SIMULATION\n");
 
-    printf("\n\n\n");
-
-
-    printf("lista vazia: %d\n", isEmpty(manager->highPriorityQueue));
-    enQueue(manager->highPriorityQueue, 10);
-    printf("lista vazia: %d\n", isEmpty(manager->highPriorityQueue));
-    show(manager->highPriorityQueue);
-    enQueue(manager->highPriorityQueue, 20);
-    printf("lista vazia: %d\n", isEmpty(manager->highPriorityQueue));
-    show(manager->highPriorityQueue);
-    deQueue(manager->highPriorityQueue);
-    show(manager->highPriorityQueue);
-    deQueue(manager->highPriorityQueue);
-    show(manager->highPriorityQueue);
-    enQueue(manager->highPriorityQueue, 30);
-    show(manager->highPriorityQueue);
-    enQueue(manager->highPriorityQueue, 40);
-    show(manager->highPriorityQueue);
-    enQueue(manager->highPriorityQueue, 50);
-    show(manager->highPriorityQueue);
-
-    struct Node *n = deQueue(manager->highPriorityQueue);
-    if(n != NULL)
-        printf("Dequeued item is %d\n", n->data);
-    return 0;
+    return EXIT_SUCCESS;
 }

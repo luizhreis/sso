@@ -18,6 +18,20 @@ int generateNextPid(int currentPid){
     return ++currentPid;
 }
 
+int isAllExecutionQueuesEmpty(struct ProcessManager *manager){
+    if(isEmpty(manager->highPriorityQueue) && isEmpty(manager->lowPriorityQueue)){
+        return 1;
+    }
+    return 0;
+}
+
+int isAllIOQueuesEmpty(struct ProcessManager *manager){
+    if(isEmpty(manager->ioQueue)){
+        return 1;
+    }
+    return 0;
+}
+
 // struct Process* generateProcess(int pid, int ppid, int priority, int burstTime){
 //     struct Process *process = createProcess(pid, ppid, priority, burstTime);
 //     return process;
