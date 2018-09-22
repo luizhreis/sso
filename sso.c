@@ -112,6 +112,8 @@ int main(){
         if(newProcessCreation->data == -1 && !pidRunning && isAllExecutionQueuesEmpty(manager) && isAllIOQueuesEmpty(manager)){
             break;
         }
+
+        fprintf(stdout, C_WHITE "\n%s" C_RESET, "<ENTER> for next instant");
         getchar();
     }
     fprintf(stdout, C_BLUE "\n%s" C_RESET, "END OF SIMULATION\n");
