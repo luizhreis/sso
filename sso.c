@@ -64,6 +64,7 @@ int main(){
             if(!newProcessCreation)
                 newProcessCreation = newNode(simulationTimeLimit + 1);
         }
+        printf("PONTO 1\n");
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
                 pidRunning = deQueue(manager->highPriorityQueue);
@@ -77,30 +78,30 @@ int main(){
             }
             
         }
+        printf("PONTO 2\n");
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
             fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
-            // printf("PROCESS RUNNING: pid = %d, priority = %d, execution time = %d\n", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
-        }
-        if(processRunning->burstTime == 0){
-            fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d\n", "Process Terminated", processRunning->pid, processRunning->priority);
-            free(processRunning);
-            manager->processList[pidRunning->data] = NULL;
-            processRunning = NULL;
-            pidRunning = NULL;
-            partialTime = 0;
-        }
-        else if(processRunning->burstTime > 0 && timeSlice == partialTime ){
-            if(processRunning->priority == 0){
-                enQueue(manager->highPriorityQueue, processRunning->pid);
+            if(processRunning->burstTime == 0){
+                fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d\n", "Process Terminated", processRunning->pid, processRunning->priority);
+                free(processRunning);
+                manager->processList[pidRunning->data] = NULL;
+                processRunning = NULL;
+                pidRunning = NULL;
+                partialTime = 0;
             }
-            else{
-                enQueue(manager->lowPriorityQueue, processRunning->pid);
+            else if(processRunning->burstTime > 0 && timeSlice == partialTime ){
+                if(processRunning->priority == 0){
+                    enQueue(manager->highPriorityQueue, processRunning->pid);
+                }
+                else{
+                    enQueue(manager->lowPriorityQueue, processRunning->pid);
+                }
+                processRunning->state = 0;
+                pidRunning = NULL;
+                partialTime = 0;
             }
-            processRunning->state = 0;
-            pidRunning = NULL;
-            partialTime = 0;
         }
         fprintf(stdout, C_BOLD "\n%s" C_RESET, "High Priority Queue:\t");
         show(manager->highPriorityQueue);
