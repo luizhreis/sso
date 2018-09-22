@@ -64,7 +64,6 @@ int main(){
             if(!newProcessCreation)
                 newProcessCreation = newNode(simulationTimeLimit + 1);
         }
-        printf("PONTO 1\n");
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
                 pidRunning = deQueue(manager->highPriorityQueue);
@@ -78,13 +77,12 @@ int main(){
             }
             
         }
-        printf("PONTO 2\n");
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
             fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
             if(processRunning->burstTime == 0){
-                fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d\n", "Process Terminated", processRunning->pid, processRunning->priority);
+                fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
                 free(processRunning);
                 manager->processList[pidRunning->data] = NULL;
                 processRunning = NULL;
