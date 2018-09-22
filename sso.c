@@ -54,7 +54,7 @@ int main(){
     initiateProcessManager(manager);
 
     newProcessCreation = deQueue(processCreation);
-    while(simulationTime < simulationTimeLimit){
+    while(1){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
