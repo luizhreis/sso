@@ -6,6 +6,17 @@
 #include "process.h"
 #include "parseInputFile.h"
 
+#define C_RESET       "\033[0m"       // Clear
+#define C_BOLD        "\033[1m"       // Bold
+#define C_BLACK       "\033[30m"      // Black
+#define C_RED         "\033[31m"      // Red
+#define C_GREEN       "\033[32m"      // Green
+#define C_YELLOW      "\033[33m"      // Yellow
+#define C_BLUE        "\033[34m"      // Blue
+#define C_MAGENTA     "\033[35m"      // Magenta
+#define C_CYAN        "\033[36m"      // Cyan
+#define C_WHITE       "\033[37m"      // White
+
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
     manager->lowPriorityQueue = createQueue();
@@ -14,7 +25,8 @@ void initiateProcessManager(struct ProcessManager *manager){
 
 void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime){
     struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
-    printf("PROCESS CREATED: pid = %d, priority = %d, arrival time = %d, execution time = %d\n", process->pid, process->priority, process->arrivalTime, process->burstTime);
+    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
+    // printf("PROCESS CREATED: pid = %d, priority = %d, arrival time = %d, execution time = %d\n", process->pid, process->priority, process->arrivalTime, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
     manager->nextPid = generateNextPid(manager->nextPid);
@@ -37,31 +49,20 @@ int main(){
     struct Queue *processCreation = createQueue();
 
     parseProcessFile("process.txt", processCreation);
-    show(processCreation);
+    // show(processCreation);
 
     initiateProcessManager(manager);
 
-    // generateProcess(manager, 0, 0, 10);
-    // show(manager->highPriorityQueue);
-    // show(manager->lowPriorityQueue);
-    // generateProcess(manager, 0, 0, 20);
-    show(manager->highPriorityQueue);
-    show(manager->lowPriorityQueue);
-
-    // teste = manager->processList[0];
-    // printf("TESTE: %d\n", teste->pid);
-    // teste = manager->processList[1];
-    // printf("TESTE: %d\n", teste->pid);
-
     newProcessCreation = deQueue(processCreation);
-    // printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
     while(simulationTime < simulationTimeLimit){
-        printf("SIMULATION TIME = %d\n", simulationTime);
+        system("clear");
+        fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
-            // printf("NOVO PROC: time creation = %d, priority = %d\n", newProcessCreation->data, newProcessCreation->priority);
             generateProcess(manager, 0, newProcessCreation->priority, simulationTime);
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
+            if(!newProcessCreation)
+                newProcessCreation = newNode(simulationTimeLimit + 1);
         }
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
@@ -78,11 +79,12 @@ int main(){
         }
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
-            // printf("BURST TIME: %d\n", processRunning->burstTime);
-            printf("PROCESS RUNNING: pid = %d, priority = %d, execution time = %d\n", processRunning->pid, processRunning->priority, processRunning->burstTime);
+            fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
+            // printf("PROCESS RUNNING: pid = %d, priority = %d, execution time = %d\n", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
         }
         if(processRunning->burstTime == 0){
+            fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d\n", "Process Terminated", processRunning->pid, processRunning->priority);
             free(processRunning);
             manager->processList[pidRunning->data] = NULL;
             processRunning = NULL;
@@ -100,8 +102,11 @@ int main(){
             pidRunning = NULL;
             partialTime = 0;
         }
+        fprintf(stdout, C_BOLD "\n%s" C_RESET, "High Priority Queue:\t");
         show(manager->highPriorityQueue);
+        fprintf(stdout, C_BOLD "%s" C_RESET, "Low Priority Queue:\t");
         show(manager->lowPriorityQueue);
+        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Queue:\t\t");
         show(manager->ioQueue);
         simulationTime++;
         getchar();
@@ -127,9 +132,6 @@ int main(){
     show(manager->highPriorityQueue);
     enQueue(manager->highPriorityQueue, 50);
     show(manager->highPriorityQueue);
-
-    // printf("PID: %d, BURST TIME: %f\n", proc1->pid, proc1->burstTime);
-    // printf("PID: %d, BURST TIME: %f\n", proc2->pid, proc2->burstTime);
 
     struct Node *n = deQueue(manager->highPriorityQueue);
     if(n != NULL)
