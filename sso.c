@@ -32,12 +32,13 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioQueue = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess){
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, FILE *logfile){
     struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
     fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
     // printf("PROCESS CREATED: pid = %d, priority = %d, arrival time = %d, execution time = %d\n", process->pid, process->priority, process->arrivalTime, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
+    fprintf(logfile, "PROCESS CREATED -- Creation Time: %d, PID: %d, Duration: %d, PPID: %d\n",arrivalTime,process->pid,process->burstTime,ppid);
     manager->nextPid = generateNextPid(manager->nextPid, maxProcess);
 }
 
@@ -58,6 +59,14 @@ int main(int argc, char **argv){
     struct Process *processRunning;
     struct Queue *processCreation = createQueue();
 
+    FILE *ptr_logfile = NULL;
+    ptr_logfile = fopen("log.txt","w");
+    if(!ptr_logfile){
+        printf("FALHA AO CRIAR ARQUIVO DE LOG");
+        exit(1);
+    }
+
+    parseProcessFile("process.txt", processCreation);
     while(1){
         int option_index = 0;
         opt = getopt_long(argc, argv, "t:l:i:o:", long_options, &option_index);
@@ -94,7 +103,7 @@ int main(int argc, char **argv){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
-            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess);
+            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, ptr_logfile);
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
             if(!newProcessCreation)
