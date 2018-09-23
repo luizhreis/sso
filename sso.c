@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 
 #include "processManager.h"
 #include "fifoQueues.h"
@@ -17,6 +18,14 @@
 #define C_CYAN        "\033[36m"      // Cyan
 #define C_WHITE       "\033[37m"      // White
 
+static struct option long_options[] = {
+    {"time_slice",      required_argument, NULL, 't'},
+    {"process_limit",   required_argument, NULL, 'l'},
+    {"input_file",      required_argument, NULL, 'i'},
+    {"output_path",     required_argument, NULL, 'o'},
+    {NULL, 0, NULL, 0}
+};
+
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
     manager->lowPriorityQueue = createQueue();
@@ -33,12 +42,14 @@ void generateProcess(struct ProcessManager *manager, int ppid, int priority, int
     manager->nextPid = generateNextPid(manager->nextPid);
 }
 
-int main(){
-    const unsigned int maxProcess = 1024;
-    const unsigned int timeSlice = 4;
-    const unsigned int simulationTimeLimit = 10000;
+int main(int argc, char **argv){
+    unsigned int maxProcess;
+    unsigned int timeSlice;
     unsigned int simulationTime = 0;
     unsigned int partialTime = 0;
+    int opt;
+    char *inputFile;
+    char *outputPath;
     // struct Process *(processList[maxProcess]);
     struct Process *tmpProc;
     struct Process *teste;
@@ -46,9 +57,9 @@ int main(){
     struct Node *ioRunning = NULL;
     struct Node *newProcessCreation = NULL;
     struct Process *processRunning;
-    struct ProcessManager *manager = createProcessManager();
     struct Queue *processCreation = createQueue();
 
+<<<<<<< HEAD
     FILE *ptr_logfile = NULL;
     ptr_logfile = fopen("log.txt","w");
     if(!ptr_logfile){
@@ -57,12 +68,41 @@ int main(){
     }
 
     parseProcessFile("process.txt", processCreation);
+=======
+    while(1){
+        int option_index = 0;
+        opt = getopt_long(argc, argv, "t:l:i:o:", long_options, &option_index);
+        if(opt == -1)
+            break;
+        switch(opt){
+            case 't':
+                timeSlice = atoi(optarg);
+                break;
+            case 'l':
+                maxProcess = atoi(optarg);
+                break;
+            case 'i':
+                inputFile = optarg;
+                break;
+            case 'o':
+                outputPath = optarg;
+                break;
+            default:
+                abort();
+
+        }
+    }
+    struct Process *list = createProcessList(maxProcess);
+    struct ProcessManager *manager = createProcessManager(maxProcess);
+
+    parseProcessFile(inputFile, processCreation);
+>>>>>>> 49f77129dcc64308cb04207ae1478c0c9157adec
     // show(processCreation);
 
     initiateProcessManager(manager);
 
     newProcessCreation = deQueue(processCreation);
-    while(simulationTime < simulationTimeLimit){
+    while(1){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
@@ -70,7 +110,7 @@ int main(){
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
             if(!newProcessCreation)
-                newProcessCreation = newNode(-1);//(simulationTimeLimit + 1);
+                newProcessCreation = newNode(-1);
         }
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
