@@ -56,7 +56,6 @@ int main(int argc, char **argv){
     struct Node *ioRunning = NULL;
     struct Node *newProcessCreation = NULL;
     struct Process *processRunning;
-    struct ProcessManager *manager = createProcessManager();
     struct Queue *processCreation = createQueue();
 
     while(1){
@@ -82,6 +81,8 @@ int main(int argc, char **argv){
 
         }
     }
+    struct Process *list = createProcessList(maxProcess);
+    struct ProcessManager *manager = createProcessManager(maxProcess);
 
     parseProcessFile(inputFile, processCreation);
     // show(processCreation);

@@ -1,14 +1,20 @@
 struct ProcessManager{
     int nextPid;
-    struct Process *(processList[1024]);
+    // struct Process *(processList[1024]);
     struct Queue *highPriorityQueue;
     struct Queue *lowPriorityQueue;
     struct Queue *ioQueue;
+    struct Process *(processList)[];
 };
 
-struct ProcessManager *createProcessManager(){
-    struct ProcessManager *p = (struct ProcessManager*)malloc(sizeof(struct ProcessManager));
-    // p->processArray = (struct Process*)malloc(sizeof(struct Process)*maxProcess);
+struct Process *createProcessList(unsigned int maxProcess){
+    struct Process *processList = (struct Process*) malloc(sizeof(struct Process*) * maxProcess);
+    return processList;
+}
+
+struct ProcessManager *createProcessManager(struct Process *processList){
+    struct ProcessManager *p = (struct ProcessManager*)malloc(sizeof(struct ProcessManager) + sizeof(processList));
+    // p->processList = (struct Process*)malloc(sizeof(struct Process)*maxProcess);
     p->nextPid = 0;
 
     return p;
