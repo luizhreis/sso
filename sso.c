@@ -32,13 +32,13 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioQueue = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime){
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess){
     struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
     fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
     // printf("PROCESS CREATED: pid = %d, priority = %d, arrival time = %d, execution time = %d\n", process->pid, process->priority, process->arrivalTime, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
-    manager->nextPid = generateNextPid(manager->nextPid);
+    manager->nextPid = generateNextPid(manager->nextPid, maxProcess);
 }
 
 int main(int argc, char **argv){
@@ -94,7 +94,7 @@ int main(int argc, char **argv){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
-            generateProcess(manager, 0, newProcessCreation->priority, simulationTime);
+            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess);
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
             if(!newProcessCreation)

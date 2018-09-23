@@ -20,7 +20,10 @@ struct ProcessManager *createProcessManager(struct Process *processList){
     return p;
 }
 
-int generateNextPid(int currentPid){
+int generateNextPid(int currentPid, int maxProcess){
+    if (currentPid > maxProcess){
+        currentPid = 0;
+    }
     return ++currentPid;
 }
 
