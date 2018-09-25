@@ -67,7 +67,6 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    parseProcessFile("process.txt", processCreation);
     while(1){
         int option_index = 0;
         opt = getopt_long(argc, argv, "t:l:i:o:", long_options, &option_index);
