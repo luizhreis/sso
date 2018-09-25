@@ -115,13 +115,14 @@ int main(int argc, char **argv){
                 pidRunning = deQueue(manager->highPriorityQueue);
                 processRunning = manager->processList[pidRunning->data];
                 processRunning->state = 1;
+                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
             }
             else if(!isEmpty(manager->lowPriorityQueue)){
                 pidRunning = deQueue(manager->lowPriorityQueue);
                 processRunning = manager->processList[pidRunning->data];
                 processRunning->state = 1;
+                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
             }
-            fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
         }
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
