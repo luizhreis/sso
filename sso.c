@@ -114,13 +114,13 @@ int main(int argc, char **argv){
                 pidRunning = deQueue(manager->highPriorityQueue);
                 processRunning = manager->processList[pidRunning->data];
                 processRunning->state = 1;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
+                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d, QUEUE: HIGH\n",processRunning->pid,simulationTime);
             }
             else if(!isEmpty(manager->lowPriorityQueue)){
                 pidRunning = deQueue(manager->lowPriorityQueue);
                 processRunning = manager->processList[pidRunning->data];
                 processRunning->state = 1;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
+                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d, QUEUE: LOW\n",processRunning->pid,simulationTime);
             }
         }
         if(processRunning != NULL){
@@ -139,11 +139,14 @@ int main(int argc, char **argv){
             else if(processRunning->burstTime > 0 && timeSlice == partialTime){
                 if(processRunning->priority == 0){
                     enQueue(manager->highPriorityQueue, processRunning->pid);
+                    fprintf(ptr_logfile,"PROCESS PREEMPTED -- PID: %d, TIME: %d, QUEUE: HIGH\n",processRunning->pid,simulationTime);
+
                 }
                 else{
                     enQueue(manager->lowPriorityQueue, processRunning->pid);
+                    fprintf(ptr_logfile,"PROCESS PREEMPTED -- PID: %d, TIME: %d, QUEUE:LOW\n",processRunning->pid,simulationTime);
+
                 }
-                fprintf(ptr_logfile,"PROCESS PREEMPTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
                 processRunning->state = 0;
                 pidRunning = NULL;
                 partialTime = 0;
@@ -165,6 +168,8 @@ int main(int argc, char **argv){
         getchar();
     }
     fprintf(stdout, C_BLUE "\n%s" C_RESET, "END OF SIMULATION\n");
+    fprintf(ptr_logfile, "------------- SIMULATION ENDED -------------");
+    fclose(ptr_logfile);
 
     return EXIT_SUCCESS;
 }
