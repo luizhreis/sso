@@ -36,8 +36,7 @@ void initiateProcessManager(struct ProcessManager *manager){
 
 void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, FILE *logfile){
     struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
-    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
-    // printf("PROCESS CREATED: pid = %d, priority = %d, arrival time = %d, execution time = %d\n", process->pid, process->priority, process->arrivalTime, process->burstTime);
+    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
     fprintf(logfile, "PROCESS CREATED -- PID: %d, Time: %d, Duration: %d, PPID: %d\n",arrivalTime,process->pid,process->burstTime,ppid);
@@ -51,8 +50,7 @@ int main(int argc, char **argv){
     unsigned int partialTime = 0;
     int opt;
     char *inputFile;
-    char *outputPath;
-    // struct Process *(processList[maxProcess]);
+    char *outputFile;
     struct Process *tmpProc;
     struct Process *teste;
     struct Node *pidRunning = NULL;
@@ -62,12 +60,6 @@ int main(int argc, char **argv){
     struct Queue *processCreation = createQueue();
 
     FILE *ptr_logfile = NULL;
-
-    ptr_logfile = fopen("log.txt","w");
-    if(!ptr_logfile){
-        printf("FALHA AO CRIAR ARQUIVO DE LOG");
-        exit(1);
-    }
 
     while(1){
         int option_index = 0;
@@ -85,13 +77,20 @@ int main(int argc, char **argv){
                 inputFile = optarg;
                 break;
             case 'o':
-                outputPath = optarg;
+                outputFile = optarg;
                 break;
             default:
                 abort();
 
         }
     }
+
+    ptr_logfile = fopen(outputFile,"w");
+    if(!ptr_logfile){
+        printf("FALHA AO CRIAR ARQUIVO DE LOG");
+        exit(1);
+    }
+
     struct Process *list = createProcessList(maxProcess);
     struct ProcessManager *manager = createProcessManager(maxProcess);
 
@@ -127,10 +126,10 @@ int main(int argc, char **argv){
         }
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
-            fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
+            fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
             if(processRunning->burstTime == 0){
-                fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
+                fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
                 fprintf(ptr_logfile,"PROCESS TERMINATED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
                 free(processRunning);
                 manager->processList[pidRunning->data] = NULL;
@@ -139,12 +138,13 @@ int main(int argc, char **argv){
                 partialTime = 0;
             }
             else if(processRunning->burstTime > 0 && timeSlice == partialTime){
-                if(processRunning->priority == 0){
-                    enQueue(manager->highPriorityQueue, processRunning->pid);
-                }
-                else{
-                    enQueue(manager->lowPriorityQueue, processRunning->pid);
-                }
+                // if(processRunning->priority == 0){
+                //     enQueue(manager->highPriorityQueue, processRunning->pid);
+                // }
+                // else{
+                //     enQueue(manager->lowPriorityQueue, processRunning->pid);
+                // }
+                enQueue(manager->lowPriorityQueue, processRunning->pid);
                 fprintf(ptr_logfile,"PROCESS PREEMPTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
                 processRunning->state = 0;
                 pidRunning = NULL;
