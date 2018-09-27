@@ -29,7 +29,9 @@ static struct option long_options[] = {
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
     manager->lowPriorityQueue = createQueue();
-    manager->ioQueue = createQueue();
+    manager->ioDisk = createQueue();
+    manager->ioPrinter = createQueue();
+    manager->ioTape = createQueue();
 }
 
 void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, FILE *logfile){
@@ -153,8 +155,12 @@ int main(int argc, char **argv){
         show(manager->highPriorityQueue);
         fprintf(stdout, C_BOLD "%s" C_RESET, "Low Priority Queue:\t");
         show(manager->lowPriorityQueue);
-        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Queue:\t\t");
-        show(manager->ioQueue);
+        fprintf(stdout, C_BOLD "\n%s" C_RESET, "I/O Printer:\t\t");
+        show(manager->ioPrinter);
+        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Disk:\t\t");
+        show(manager->ioDisk);
+        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Tape:\t\t");
+        show(manager->ioTape);
         simulationTime++;
 
         if(newProcessCreation->data == -1 && !pidRunning && isAllExecutionQueuesEmpty(manager) && isAllIOQueuesEmpty(manager)){
