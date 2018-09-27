@@ -3,7 +3,9 @@ struct ProcessManager{
     // struct Process *(processList[1024]);
     struct Queue *highPriorityQueue;
     struct Queue *lowPriorityQueue;
-    struct Queue *ioQueue;
+    struct Queue *ioPrinter;
+    struct Queue *ioDisk;
+    struct Queue *ioTape;
     struct Process *(processList)[];
 };
 
@@ -35,7 +37,7 @@ int isAllExecutionQueuesEmpty(struct ProcessManager *manager){
 }
 
 int isAllIOQueuesEmpty(struct ProcessManager *manager){
-    if(isEmpty(manager->ioQueue)){
+    if(isEmpty(manager->ioDisk) && isEmpty(manager->ioPrinter) && isEmpty(manager->ioTape)){
         return 1;
     }
     return 0;

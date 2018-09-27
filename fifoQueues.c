@@ -71,7 +71,7 @@ int isEmpty(struct Queue *q){
 
 void show(struct Queue *q){
     if(isEmpty(q)){
-        printf("Lista vazia");
+        printf("Empty queue");
     } else {
         struct Node *temp = q->first;
         do{
