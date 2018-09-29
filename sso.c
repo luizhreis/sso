@@ -145,6 +145,7 @@ int main(int argc, char **argv){
         }
         if(processDiskRunning != NULL){
             if(partialDiskTime < diskTime){
+                fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d\n", "I/O Disk Running", processDiskRunning->pid);
                 partialDiskTime++;
             }
             else{
@@ -156,8 +157,8 @@ int main(int argc, char **argv){
             }
         }
         if(!pidTapeRunning){
-            if(!isEmpty(manager->ioDisk)){
-                pidTapeRunning = deQueue(manager->ioDisk);
+            if(!isEmpty(manager->ioTape)){
+                pidTapeRunning = deQueue(manager->ioTape);
                 processTapeRunning = manager->processList[pidTapeRunning->data];
                 partialTapeTime = 0;
                 fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processTapeRunning->pid,simulationTime);
@@ -165,6 +166,7 @@ int main(int argc, char **argv){
         }
         if(processTapeRunning != NULL){
             if(partialTapeTime < tapeTime){
+                fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d\n", "I/O Tape Running", processTapeRunning->pid);
                 partialTapeTime++;
             }
             else{
@@ -176,8 +178,8 @@ int main(int argc, char **argv){
             }
         }
         if(!pidPrinterRunning){
-            if(!isEmpty(manager->ioDisk)){
-                pidPrinterRunning = deQueue(manager->ioDisk);
+            if(!isEmpty(manager->ioPrinter)){
+                pidPrinterRunning = deQueue(manager->ioPrinter);
                 processPrinterRunning = manager->processList[pidPrinterRunning->data];
                 partialPrinterTime = 0;
                 fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processPrinterRunning->pid,simulationTime);
@@ -185,6 +187,7 @@ int main(int argc, char **argv){
         }
         if(processPrinterRunning != NULL){
             if(partialPrinterTime < printerTime){
+                fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d\n", "I/O Printer Running", processPrinterRunning->pid);
                 partialPrinterTime++;
             }
             else{
