@@ -9,13 +9,8 @@ struct ProcessManager{
     struct Process *(processList)[];
 };
 
-struct Process *createProcessList(unsigned int maxProcess){
-    struct Process *processList = (struct Process*) malloc(sizeof(struct Process*) * maxProcess);
-    return processList;
-}
-
-struct ProcessManager *createProcessManager(struct Process *processList){
-    struct ProcessManager *p = (struct ProcessManager*)malloc(sizeof(struct ProcessManager) + sizeof(processList));
+struct ProcessManager *createProcessManager(unsigned int maxProcess){
+    struct ProcessManager *p = (struct ProcessManager*)malloc(sizeof(struct ProcessManager) + sizeof(maxProcess));
     // p->processList = (struct Process*)malloc(sizeof(struct Process)*maxProcess);
     p->nextPid = 0;
 

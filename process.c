@@ -8,7 +8,7 @@ struct Process{
     int finishTime;
 };
 
-struct Proccess *createProcess(int pid, int ppid, int priority, int arrivalTime){
+struct Process *createProcess(int pid, int ppid, int priority, int arrivalTime){
     struct Process *p = (struct Process*)malloc(sizeof(struct Process));
     p->pid = pid;
     p->ppid = ppid;
@@ -16,4 +16,5 @@ struct Proccess *createProcess(int pid, int ppid, int priority, int arrivalTime)
     p->priority = priority;
     p->arrivalTime = arrivalTime;
     p->burstTime = (rand() % 19) + 1;
-};
+    return p;
+}
