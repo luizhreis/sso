@@ -194,37 +194,7 @@ int main(int argc, char **argv){
             processRunning->burstTime -= 1;
             fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
-            if((rand() % 5) <= 1){
-                
-                switch ( rand() % 3){
-                    case 0:
-                        /* fila do disco */
-                        enQueue(manager->ioDisk, processRunning->pid);
-                        processRunning->state = 2;
-                        processRunning = NULL;
-                        pidRunning = NULL;
-                        partialTime = 0;
-                        break;
-                    case 1:
-                        /* fila da fita */
-                        enQueue(manager->ioTape, processRunning->pid);
-                        processRunning->state = 2;
-                        processRunning = NULL;
-                        pidRunning = NULL;
-                        partialTime = 0;
-                        break;
-                    case 2:
-                        /* fila da impressora */
-                        enQueue(manager->ioPrinter, processRunning->pid);
-                        processRunning->state = 2;
-                        processRunning = NULL;
-                        pidRunning = NULL;
-                        partialTime = 0;
-                        break;
-                }
-            }
-            else{   
-                if(processRunning->burstTime <= 0){
+            if(processRunning->burstTime == 0){
                     fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
                     logProcessTerminated(processRunning->pid, simulationTime);
                     free(processRunning);
@@ -232,8 +202,39 @@ int main(int argc, char **argv){
                     processRunning = NULL;
                     pidRunning = NULL;
                     partialTime = 0;
+            }
+            else if((rand() % 5) <= 1){
+                if (processRunning->state != 2){
+                    switch ( rand() % 3){
+                        case 0:
+                            /* fila do disco */
+                            enQueue(manager->ioDisk, processRunning->pid);
+                            processRunning->state = 2;
+                            processRunning = NULL;
+                            pidRunning = NULL;
+                            partialTime = 0;
+                            break;
+                        case 1:
+                            /* fila da fita */
+                            enQueue(manager->ioTape, processRunning->pid);
+                            processRunning->state = 2;
+                            processRunning = NULL;
+                            pidRunning = NULL;
+                            partialTime = 0;
+                            break;
+                        case 2:
+                            /* fila da impressora */
+                            enQueue(manager->ioPrinter, processRunning->pid);
+                            processRunning->state = 2;
+                            processRunning = NULL;
+                            pidRunning = NULL;
+                            partialTime = 0;
+                            break;
+                    }
                 }
-                else if(processRunning->burstTime > 0 && timeSlice == partialTime){
+            }
+            else{       
+                if(timeSlice == partialTime){
                     // if(processRunning->priority == 0){
                     //     enQueue(manager->highPriorityQueue, processRunning->pid);
                     // }
