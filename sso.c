@@ -6,6 +6,7 @@
 #include "fifoQueues.h"
 #include "process.h"
 #include "parseInputFile.h"
+#include "logDriver.h"
 
 #define C_RESET       "\033[0m"       // Clear
 #define C_BOLD        "\033[1m"       // Bold
@@ -34,12 +35,12 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioTape = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, FILE *logfile){
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess){
     struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
     fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
-    fprintf(logfile, "PROCESS CREATED -- PID: %d, Time: %d, Duration: %d, PPID: %d\n",arrivalTime,process->pid,process->burstTime,ppid);
+    logProcessCreation(arrivalTime, process->pid, process->burstTime, ppid);
     manager->nextPid = generateNextPid(manager->nextPid, maxProcess);
 }
 
@@ -70,8 +71,6 @@ int main(int argc, char **argv){
     struct Process *processPrinterRunning = NULL;
     struct Queue *processCreation = createQueue();
 
-    FILE *ptr_logfile = NULL;
-
     while(1){
         int option_index = 0;
         opt = getopt_long(argc, argv, "t:l:i:o:", long_options, &option_index);
@@ -96,11 +95,7 @@ int main(int argc, char **argv){
         }
     }
 
-    ptr_logfile = fopen(outputFile,"w");
-    if(!ptr_logfile){
-        printf("FALHA AO CRIAR ARQUIVO DE LOG");
-        exit(1);
-    }
+    createLogFile(outputFile);
 
     struct Process *list = createProcessList(maxProcess);
     struct ProcessManager *manager = createProcessManager(maxProcess);
@@ -115,7 +110,7 @@ int main(int argc, char **argv){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
-            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, ptr_logfile);
+            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess);
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
             if(!newProcessCreation)
@@ -126,13 +121,13 @@ int main(int argc, char **argv){
                 pidRunning = deQueue(manager->highPriorityQueue);
                 processRunning = manager->processList[pidRunning->data];
                 processRunning->state = 1;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
+                logProcessStarted(processRunning->pid,simulationTime,processRunning->burstTime);
             }
             else if(!isEmpty(manager->lowPriorityQueue)){
                 pidRunning = deQueue(manager->lowPriorityQueue);
                 processRunning = manager->processList[pidRunning->data];
                 processRunning->state = 1;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
+                logProcessStarted(processRunning->pid,simulationTime,processRunning->burstTime);
             }
         }
         if(!pidDiskRunning){
@@ -140,7 +135,7 @@ int main(int argc, char **argv){
                 pidDiskRunning = deQueue(manager->ioDisk);
                 processDiskRunning = manager->processList[pidDiskRunning->data];
                 partialDiskTime = 0;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processDiskRunning->pid,simulationTime);
+                logProcessStarted(pidDiskRunning->data,simulationTime,processDiskRunning->burstTime);
             }
         }
         if(processDiskRunning != NULL){
@@ -161,7 +156,7 @@ int main(int argc, char **argv){
                 pidTapeRunning = deQueue(manager->ioTape);
                 processTapeRunning = manager->processList[pidTapeRunning->data];
                 partialTapeTime = 0;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processTapeRunning->pid,simulationTime);
+                logProcessStarted(pidTapeRunning->data,simulationTime,processTapeRunning->burstTime);
             }
         }
         if(processTapeRunning != NULL){
@@ -182,7 +177,7 @@ int main(int argc, char **argv){
                 pidPrinterRunning = deQueue(manager->ioPrinter);
                 processPrinterRunning = manager->processList[pidPrinterRunning->data];
                 partialPrinterTime = 0;
-                fprintf(ptr_logfile,"PROCESS STARTED -- PID: %d, TIME: %d\n",processPrinterRunning->pid,simulationTime);
+                logProcessStarted(pidPrinterRunning->data,simulationTime,processPrinterRunning->burstTime);
             }
         }
         if(processPrinterRunning != NULL){
@@ -234,7 +229,7 @@ int main(int argc, char **argv){
             else{   
                 if(processRunning->burstTime == 0){
                     fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
-                    fprintf(ptr_logfile,"PROCESS TERMINATED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
+                    logProcessTerminated(processRunning->pid, simulationTime);
                     free(processRunning);
                     manager->processList[pidRunning->data] = NULL;
                     processRunning = NULL;
@@ -249,7 +244,7 @@ int main(int argc, char **argv){
                     //     enQueue(manager->lowPriorityQueue, processRunning->pid);
                     // }
                     enQueue(manager->lowPriorityQueue, processRunning->pid);
-                    fprintf(ptr_logfile,"PROCESS PREEMPTED -- PID: %d, TIME: %d\n",processRunning->pid,simulationTime);
+                    logProcessPreempted(processRunning->pid, simulationTime);
                     processRunning->state = 0;
                     pidRunning = NULL;
                     partialTime = 0;
