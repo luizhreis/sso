@@ -45,13 +45,13 @@ void generateProcess(struct ProcessManager *manager, int ppid, int priority, int
 }
 
 int main(int argc, char **argv){
-    unsigned int maxProcess;
-    unsigned int timeSlice;
+    unsigned int maxProcess = 1024;
+    unsigned int timeSlice = 4;
     unsigned int simulationTime = 0;
     unsigned int partialTime = 0;
-    const unsigned int diskTime = 3;
-    const unsigned int tapeTime = 5;
-    const unsigned int printerTime = 10;
+    unsigned int diskTime = 3;
+    unsigned int tapeTime = 5;
+    unsigned int printerTime = 10;
     unsigned int partialDiskTime = 0;
     unsigned int partialTapeTime = 0;
     unsigned int partialPrinterTime = 0;
@@ -71,7 +71,7 @@ int main(int argc, char **argv){
 
     while(1){
         int option_index = 0;
-        opt = getopt_long(argc, argv, "t:l:i:o:", long_options, &option_index);
+        opt = getopt_long(argc, argv, "t:l:i:o:d:f:p:", long_options, &option_index);
         if(opt == -1)
             break;
         switch(opt){
@@ -86,6 +86,15 @@ int main(int argc, char **argv){
                 break;
             case 'o':
                 outputFile = optarg;
+                break;
+            case 'd':
+                diskTime = atoi(optarg);
+                break;
+            case 'f':
+                tapeTime = atoi(optarg);
+                break;
+            case 'p':
+                printerTime = atoi(optarg);
                 break;
             default:
                 abort();
