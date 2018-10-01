@@ -37,7 +37,7 @@ void initiateProcessManager(struct ProcessManager *manager){
 
 void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess){
     struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
-    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
+    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Created", process->pid, process->priority, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
     logProcessCreation(arrivalTime, process->pid, process->burstTime, ppid);
@@ -192,7 +192,7 @@ int main(int argc, char **argv){
         }
         if(processRunning != NULL){
             processRunning->burstTime -= 1;
-            fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
+            fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, priority = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->priority, processRunning->burstTime);
             partialTime++;
             if((rand() % 5) <= 1){
                 
@@ -224,8 +224,8 @@ int main(int argc, char **argv){
                 }
             }
             else{   
-                if(processRunning->burstTime == 0){
-                    fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
+                if(processRunning->burstTime <= 0){
+                    fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, priority = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->priority, processRunning->arrivalTime);
                     logProcessTerminated(processRunning->pid, simulationTime);
                     free(processRunning);
                     manager->processList[pidRunning->data] = NULL;
