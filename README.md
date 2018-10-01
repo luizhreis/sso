@@ -1,6 +1,6 @@
 # Simulador de Sistema Operacional
 
-## Executar com ./sso -i <ARQUIVO_INPUT> -t <TIMESLICE> -l <LIMITE DE PID> -o <ARQUIVO_OUTPUT>
+### Executar com ./sso -i <ARQUIVO_INPUT> -t <TIMESLICE> -l <LIMITE DE PID> -o <ARQUIVO_OUTPUT>
 
 Gerência de processos:
     - PID
