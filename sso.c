@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#include "processManager.h"
 #include "fifoQueues.h"
+#include "processManager.h"
 #include "process.h"
 #include "parseInputFile.h"
 #include "logDriver.h"
@@ -58,8 +58,6 @@ int main(int argc, char **argv){
     int opt;
     char *inputFile;
     char *outputFile;
-    struct Process *tmpProc;
-    struct Process *teste;
     struct Node *pidRunning = NULL;
     struct Node *pidDiskRunning = NULL;
     struct Node *pidTapeRunning = NULL;
@@ -97,7 +95,6 @@ int main(int argc, char **argv){
 
     createLogFile(outputFile);
 
-    struct Process *list = createProcessList(maxProcess);
     struct ProcessManager *manager = createProcessManager(maxProcess);
 
     parseProcessFile(inputFile, processCreation);
