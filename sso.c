@@ -35,8 +35,8 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioTape = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess){
-    struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime);
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, unsigned int maxProcessTime){
+    struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime, maxProcessTime);
     fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Created", process->pid, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
@@ -55,6 +55,7 @@ int main(int argc, char **argv){
     unsigned int partialDiskTime = 0;
     unsigned int partialTapeTime = 0;
     unsigned int partialPrinterTime = 0;
+    unsigned int maxProcessTime = 19;
     int opt;
     char *inputFile;
     char *outputFile;
@@ -71,7 +72,7 @@ int main(int argc, char **argv){
 
     while(1){
         int option_index = 0;
-        opt = getopt_long(argc, argv, "t:l:i:o:d:f:p:", long_options, &option_index);
+        opt = getopt_long(argc, argv, "t:l:i:o:d:f:p:m:", long_options, &option_index);
         if(opt == -1)
             break;
         switch(opt){
@@ -96,6 +97,9 @@ int main(int argc, char **argv){
             case 'p':
                 printerTime = atoi(optarg);
                 break;
+            case 'm':
+                maxProcessTime = atoi(optarg) - 1;
+                break;
             default:
                 abort();
 
@@ -116,7 +120,7 @@ int main(int argc, char **argv){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
         while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
-            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess);
+            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, maxProcessTime);
             free(newProcessCreation);
             newProcessCreation = deQueue(processCreation);
             if(!newProcessCreation)
