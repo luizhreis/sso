@@ -28,6 +28,7 @@ static struct option long_options[] = {
     {"tape_io_time",        required_argument, NULL, 'f'},
     {"printer_io_time",     required_argument, NULL, 'p'},
     {"max_process_time",    required_argument, NULL, 'm'},
+    {"help",    no_argument, NULL, 'h'},
     {NULL, 0, NULL, 0}
 };
 
@@ -76,10 +77,24 @@ int main(int argc, char **argv){
 
     while(1){
         int option_index = 0;
-        opt = getopt_long(argc, argv, "t:l:i:o:d:f:p:m:", long_options, &option_index);
-        if(opt == -1)
+        opt = getopt_long(argc, argv, "t:l:i:o:d:f:p:m:h", long_options, &option_index);
+        if(opt == -1) {
             break;
+        }
         switch(opt){
+            case 'h':
+                printf("Usage: ./sso -t <time_slice> -l <max_process> -i <input_file> -o <output_file>\n");
+                printf("Params:\n");
+                printf("\t-d, --disk_io_time: Disk access time\n");
+                printf("\t-f, --tape_io_time: Tape access time\n");
+                printf("\t-h, --help: Show this help\n");
+                printf("\t-i, --input_file: Path to the processes file\n");
+                printf("\t-l, --process_limit: Maximum number of process\n");
+                printf("\t-m, --max_process_time: Maximum process time\n");
+                printf("\t-o, --output_path: Path to the output log file\n");
+                printf("\t-p, --printer_io_time: Printer access time\n");
+                printf("\t-t, --time_slice: Process time slice\n");
+                exit(0);
             case 't':
                 timeSlice = atoi(optarg);
                 break;
@@ -105,7 +120,7 @@ int main(int argc, char **argv){
                 maxProcessTime = atoi(optarg) - 1;
                 break;
             default:
-                abort();
+                exit(0);
 
         }
     }
