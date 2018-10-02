@@ -20,12 +20,21 @@
 #define C_WHITE       "\033[37m"      // White
 
 static struct option long_options[] = {
-    {"time_slice",      required_argument, NULL, 't'},
-    {"process_limit",   required_argument, NULL, 'l'},
-    {"input_file",      required_argument, NULL, 'i'},
-    {"output_path",     required_argument, NULL, 'o'},
+    {"time_slice",          required_argument, NULL, 't'},
+    {"process_limit",       required_argument, NULL, 'l'},
+    {"input_file",          required_argument, NULL, 'i'},
+    {"output_path",         required_argument, NULL, 'o'},
+    {"disk_io_time",        required_argument, NULL, 'd'},
+    {"tape_io_time",        required_argument, NULL, 'f'},
+    {"printer_io_time",     required_argument, NULL, 'p'},
+    {"max_process_time",    required_argument, NULL, 'm'},
     {NULL, 0, NULL, 0}
 };
+            case 'p':
+                printerTime = atoi(optarg);
+                break;
+            case 'm':
+                maxProcessTime = atoi(optarg) - 1;
 
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
