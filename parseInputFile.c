@@ -10,20 +10,20 @@ void parseProcessFile(char *filename, struct Queue *processCreation){
     }
     buffer = (char *)malloc(20);
     while((c = fgetc(file)) != EOF){
-        if(c == ','){
+        if(c == ';'){
             buffer[n] = '\0';
             // printf("%s\n", buffer);
             newProc = enQueue(processCreation, atoi(buffer));
             n = 0;
             continue;
         }
-        else if(c == ';'){
-            buffer[n] = '\0';
-            // printf("%s\n", buffer);
-            newProc->priority = atoi(buffer);
-            n = 0;
-            continue;
-        }
+        // else if(c == ';'){
+        //     buffer[n] = '\0';
+        //     // printf("%s\n", buffer);
+        //     newProc->priority = atoi(buffer);
+        //     n = 0;
+        //     continue;
+        // }
         buffer[n++] = (char) c;
     }
     free(buffer);

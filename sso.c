@@ -30,11 +30,6 @@ static struct option long_options[] = {
     {"max_process_time",    required_argument, NULL, 'm'},
     {NULL, 0, NULL, 0}
 };
-            case 'p':
-                printerTime = atoi(optarg);
-                break;
-            case 'm':
-                maxProcessTime = atoi(optarg) - 1;
 
 void initiateProcessManager(struct ProcessManager *manager){
     manager->highPriorityQueue = createQueue();
