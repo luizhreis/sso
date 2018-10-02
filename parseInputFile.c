@@ -3,7 +3,6 @@ void parseProcessFile(char *filename, struct Queue *processCreation){
     char *buffer;
     size_t n = 0;
     int c;
-    struct Node *newProc;
     if(file == NULL){
         printf("ERRO AO ABRIRARQUIVO");
         exit(1);
@@ -13,7 +12,7 @@ void parseProcessFile(char *filename, struct Queue *processCreation){
         if(c == ';'){
             buffer[n] = '\0';
             // printf("%s\n", buffer);
-            newProc = enQueue(processCreation, atoi(buffer));
+            enQueue(processCreation, atoi(buffer));
             n = 0;
             continue;
         }

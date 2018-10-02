@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <time.h>
 
 #include "fifoQueues.h"
 #include "processManager.h"
@@ -49,6 +50,7 @@ void generateProcess(struct ProcessManager *manager, int ppid, int priority, int
 }
 
 int main(int argc, char **argv){
+    time_t t;
     unsigned int maxProcess = 1024;
     unsigned int timeSlice = 4;
     unsigned int simulationTime = 0;
@@ -73,6 +75,8 @@ int main(int argc, char **argv){
     struct Process *processTapeRunning = NULL;
     struct Process *processPrinterRunning = NULL;
     struct Queue *processCreation = createQueue();
+
+    srand( (unsigned)time(&t) );
 
     while(1){
         int option_index = 0;
