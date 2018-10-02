@@ -49,6 +49,21 @@ void generateProcess(struct ProcessManager *manager, int ppid, int priority, int
     manager->nextPid = generateNextPid(manager->nextPid, maxProcess);
 }
 
+int showHelp(){
+    printf("Usage: ./sso -t <time_slice> -l <max_process> -i <input_file> -o <output_file>\n");
+    printf("Params:\n");
+    printf("\t-d, --disk_io_time: Disk access time\n");
+    printf("\t-f, --tape_io_time: Tape access time\n");
+    printf("\t-h, --help: Show this help\n");
+    printf("\t-i, --input_file: Path to the processes file\n");
+    printf("\t-l, --process_limit: Maximum number of process\n");
+    printf("\t-m, --max_process_time: Maximum process time\n");
+    printf("\t-o, --output_path: Path to the output log file\n");
+    printf("\t-p, --printer_io_time: Printer access time\n");
+    printf("\t-t, --time_slice: Process time slice\n");
+    exit(0);
+}
+
 int main(int argc, char **argv){
     unsigned int maxProcess = 1024;
     unsigned int timeSlice = 4;
@@ -74,27 +89,22 @@ int main(int argc, char **argv){
     struct Process *processTapeRunning = NULL;
     struct Process *processPrinterRunning = NULL;
     struct Queue *processCreation = createQueue();
+    int option_index;
+    int no_opts = 1;
 
     while(1){
-        int option_index = 0;
+        option_index = 0;
         opt = getopt_long(argc, argv, "t:l:i:o:d:f:p:m:h", long_options, &option_index);
         if(opt == -1) {
+            if (no_opts == 1){
+                showHelp();
+            }
             break;
         }
+        no_opts = 0;
         switch(opt){
             case 'h':
-                printf("Usage: ./sso -t <time_slice> -l <max_process> -i <input_file> -o <output_file>\n");
-                printf("Params:\n");
-                printf("\t-d, --disk_io_time: Disk access time\n");
-                printf("\t-f, --tape_io_time: Tape access time\n");
-                printf("\t-h, --help: Show this help\n");
-                printf("\t-i, --input_file: Path to the processes file\n");
-                printf("\t-l, --process_limit: Maximum number of process\n");
-                printf("\t-m, --max_process_time: Maximum process time\n");
-                printf("\t-o, --output_path: Path to the output log file\n");
-                printf("\t-p, --printer_io_time: Printer access time\n");
-                printf("\t-t, --time_slice: Process time slice\n");
-                exit(0);
+                showHelp();
             case 't':
                 timeSlice = atoi(optarg);
                 break;
