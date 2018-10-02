@@ -57,8 +57,8 @@ int main(int argc, char **argv){
     unsigned int partialPrinterTime = 0;
     unsigned int maxProcessTime = 19;
     int opt;
-    char *inputFile;
-    char *outputFile;
+    char *inputFile = NULL;
+    char *outputFile = NULL;
     struct Node *pidRunning = NULL;
     struct Node *pidDiskRunning = NULL;
     struct Node *pidTapeRunning = NULL;
@@ -105,7 +105,7 @@ int main(int argc, char **argv){
 
         }
     }
-
+            
     createLogFile(outputFile);
 
     struct ProcessManager *manager = createProcessManager(maxProcess);

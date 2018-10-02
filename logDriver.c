@@ -1,6 +1,8 @@
 FILE *PTR_LOGFILE = NULL;
 
 int createLogFile(char *outputFile){
+    if(!outputFile) outputFile = "log.txt";
+
     PTR_LOGFILE = fopen(outputFile,"w");
     if(!PTR_LOGFILE){
         fprintf(stderr, "FALHA AO CRIAR ARQUIVO DE LOG(%d): %s\n",errno, strerror(errno));
