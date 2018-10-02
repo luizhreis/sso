@@ -297,7 +297,7 @@ int main(int argc, char **argv){
                 partialPrinterTime++;
             }
             else{
-                enQueue(manager->lowPriorityQueue, pidPrinterRunning->data);
+                enQueue(manager->highPriorityQueue, pidPrinterRunning->data);
                 processPrinterRunning->state = 0;
                 partialPrinterTime = 0;
                 processPrinterRunning = NULL;
