@@ -22,17 +22,17 @@
 #define C_WHITE       "\033[37m"      // White
 
 static struct option long_options[] = {
-    {"auto",                no_argument      , NULL, 'a'},
-    {"time_slice",          required_argument, NULL, 't'},
-    {"process_limit",       required_argument, NULL, 'l'},
-    {"input_file",          required_argument, NULL, 'i'},
-    {"output_path",         required_argument, NULL, 'o'},
-    {"disk_io_time",        required_argument, NULL, 'd'},
-    {"tape_io_time",        required_argument, NULL, 'f'},
-    {"printer_io_time",     required_argument, NULL, 'p'},
-    {"max_process_time",    required_argument, NULL, 'm'},
-    {"max_virtual_pages",   required_argument, NULL, 'v'},
-    {"help",    no_argument, NULL, 'h'},
+    {"auto",                no_argument         , NULL, 'a'},
+    {"time_slice",          required_argument   , NULL, 't'},
+    {"process_limit",       required_argument   , NULL, 'l'},
+    {"input_file",          required_argument   , NULL, 'i'},
+    {"output_path",         required_argument   , NULL, 'o'},
+    {"disk_io_time",        required_argument   , NULL, 'd'},
+    {"tape_io_time",        required_argument   , NULL, 'f'},
+    {"printer_io_time",     required_argument   , NULL, 'p'},
+    {"max_process_time",    required_argument   , NULL, 'm'},
+    {"max_virtual_pages",   required_argument   , NULL, 'v'},
+    {"help",                no_argument         , NULL, 'h'},
     {NULL, 0, NULL, 0}
 };
 
@@ -44,9 +44,9 @@ void initiateProcessManager(struct ProcessManager *manager){
     manager->ioTape = createQueue();
 }
 
-void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, unsigned int maxProcessTime){
-    struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime, maxProcessTime);
-    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Created", process->pid, process->burstTime);
+void generateProcess(struct ProcessManager *manager, int ppid, int priority, int arrivalTime, int maxProcess, unsigned int maxProcessTime, unsigned int maxVirtualPages){
+    struct Process *process = createProcess(manager->nextPid, ppid, priority, arrivalTime, maxProcessTime, maxVirtualPages);
+    fprintf(stdout, C_GREEN "%s" C_RESET ": pid = %d, virtual pages = %d, execution time = %d\n", "Process Created", process->pid, process->pages, process->burstTime);
     manager->processList[manager->nextPid] = process;
     enQueue(manager->highPriorityQueue, process->pid);
     logProcessCreation(arrivalTime, process->pid, process->burstTime, ppid);
@@ -66,6 +66,7 @@ int showHelp(){
     printf("\t-o, --output_path: Path to the output log file\n");
     printf("\t-p, --printer_io_time: Printer access time\n");
     printf("\t-t, --time_slice: Process time slice\n");
+    printf("\t-v, --max_virtual_pages: Maximum nunber of virtual pages per process\n");
     exit(0);
 }
 
@@ -82,6 +83,7 @@ int main(int argc, char **argv){
     unsigned int partialTapeTime = 0;
     unsigned int partialPrinterTime = 0;
     unsigned int maxProcessTime = 19;
+    unsigned int maxVirtualPages = 63;
     unsigned int automatic = 0;
     int opt;
     char *inputFile = NULL;
@@ -103,7 +105,7 @@ int main(int argc, char **argv){
 
     while(1){
         option_index = 0;
-        opt = getopt_long(argc, argv, "a:t:l:i:o:d:f:p:m:h", long_options, &option_index);
+        opt = getopt_long(argc, argv, "a:t:l:i:o:d:f:p:m:h:v", long_options, &option_index);
         if(opt == -1) {
             if (no_opts == 1){
                 showHelp();
@@ -141,6 +143,9 @@ int main(int argc, char **argv){
             case 'm':
                 maxProcessTime = atoi(optarg) - 1;
                 break;
+            case 'v':
+                maxVirtualPages = atoi(optarg) - 1;
+                break;
             default:
                 exit(0);
 
@@ -160,13 +165,13 @@ int main(int argc, char **argv){
     while(1){
         system("clear");
         fprintf(stdout, C_YELLOW "%s" C_RESET ": %d\n", "Simulation Time", simulationTime);
-        while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
-            generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, maxProcessTime);
-            free(newProcessCreation);
-            newProcessCreation = deQueue(processCreation);
-            if(!newProcessCreation)
-                newProcessCreation = newNode(-1);
-        }
+        // while(newProcessCreation != NULL && newProcessCreation->data == simulationTime){
+        //     generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, maxProcessTime);
+        //     free(newProcessCreation);
+        //     newProcessCreation = deQueue(processCreation);
+        //     if(!newProcessCreation)
+        //         newProcessCreation = newNode(-1);
+        // }
         if( simulationTime % 3 == 0 ){
             generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
             
