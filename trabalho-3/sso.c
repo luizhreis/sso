@@ -85,6 +85,7 @@ int main(int argc, char **argv){
     unsigned int maxProcessTime = 19;
     unsigned int maxVirtualPages = 63;
     unsigned int automatic = 0;
+    unsigned int mainMemoryFrames = 64;
     int opt;
     char *inputFile = NULL;
     char *outputFile = NULL;
@@ -174,7 +175,6 @@ int main(int argc, char **argv){
         // }
         if( simulationTime % 3 == 0 ){
             generateProcess(manager, 0, newProcessCreation->priority, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
-            
         }
         if(!pidRunning){
             if(!isEmpty(manager->highPriorityQueue)){
@@ -218,6 +218,7 @@ int main(int argc, char **argv){
             processRunning->burstTime -= 1;
             fprintf(stdout, C_YELLOW "%s" C_RESET ": pid = %d, execution time = %d\n", "Process Running", processRunning->pid, processRunning->burstTime);
             partialTime++;
+            processRunning->timeCount++;
             if(processRunning->burstTime == 0){
                 fprintf(stdout, C_RED "%s" C_RESET ": pid = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->arrivalTime);
                 logProcessTerminated(processRunning->pid, simulationTime);
@@ -259,6 +260,9 @@ int main(int argc, char **argv){
                             break;
                     }
                 }
+            }
+            else if ( processRunning->timeCount % 3 == 0 ){
+                fprintf(stdout, C_BOLD "%s" C_RESET, "CHAMA PAGINA VIRTUAL!\t");
             }
             else{       
                 if(timeSlice == partialTime){
@@ -322,11 +326,11 @@ int main(int argc, char **argv){
             }
         }
 
-        fprintf(stdout, C_BOLD "\n%s" C_RESET, "I/O Printer:\t\t");
+        fprintf(stdout, C_BOLD "\n%s" C_RESET, "I/O Printer Queue:\t\t");
         show(manager->ioPrinter);
-        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Disk:\t\t");
+        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Disk Queue:\t\t");
         show(manager->ioDisk);
-        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Tape:\t\t");
+        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Tape Queue:\t\t");
         show(manager->ioTape);
         simulationTime++;
 
