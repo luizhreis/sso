@@ -4,6 +4,7 @@ struct Process{
     int state;
     int priority;
     int burstTime;
+    int timeCount;
     int arrivalTime;
     int finishTime;
     int pages;
@@ -18,5 +19,6 @@ struct Process *createProcess(int pid, int ppid, int priority, int arrivalTime, 
     p->arrivalTime = arrivalTime;
     p->burstTime = (rand() % maxProcessTime) + 1;
     p->pages = (rand() % maxVirtualPages) + 1;
+    p->timeCount = 0;
     return p;
 }
