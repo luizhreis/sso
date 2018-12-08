@@ -49,7 +49,7 @@ struct Process *createProcess( int pid, int ppid, int priority, int arrivalTime,
 }
 
 void requestPage( struct Process *p , unsigned int *mainMemory, unsigned int *pidMemory ){
-    int page = rand() % ( p->pages );
+    int page = rand() % ( p->pages ) + 1;
     fprintf(stdout, C_CYAN C_BOLD "%s %d!\t\n" C_RESET, "Page Requested:", page);
     if( p->valid[ page - 1 ] ){
         for( int i = 0; i < 4; i++ ){
