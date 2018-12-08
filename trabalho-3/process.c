@@ -9,6 +9,7 @@ struct Process{
     int finishTime;
     int pages;
     int workingSetLimit;
+    int swapped;
     int *pageTable;
     int *valid;
     int *modified;
@@ -29,6 +30,7 @@ struct Process *createProcess( int pid, int ppid, int priority, int arrivalTime,
     p->pages = (rand() % maxVirtualPages) + 1;
     p->timeCount = 0;
     p->workingSetLimit = 4;
+    p->swapped = 0;
     p->pageTable = ( int * )malloc( sizeof( int ) * maxVirtualPages );
     p->valid = ( int * )malloc( sizeof( int ) * maxVirtualPages );
     p->modified = ( int * )malloc( sizeof( int ) * maxVirtualPages );
