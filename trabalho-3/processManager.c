@@ -1,17 +1,17 @@
 struct ProcessManager{
     int nextPid;
-    // struct Process *(processList[1024]);
+    struct Process *(processList[1024]);
     struct Queue *highPriorityQueue;
     struct Queue *lowPriorityQueue;
     struct Queue *ioPrinter;
     struct Queue *ioDisk;
     struct Queue *ioTape;
-    struct Process *(processList)[];
+    // struct Process *(processList)[];
 };
 
 struct ProcessManager *createProcessManager(unsigned int maxProcess){
-    struct ProcessManager *p = ( struct ProcessManager* )malloc( sizeof( struct ProcessManager ) + sizeof( maxProcess ) );
-    // p->processList = (struct Process*)malloc(sizeof(struct Process)*maxProcess);
+    // struct ProcessManager *p = ( struct ProcessManager* )malloc( sizeof( struct ProcessManager ) + sizeof( maxProcess ) );
+    struct ProcessManager *p = ( struct ProcessManager* )malloc( sizeof( struct ProcessManager ) );
     p->nextPid = 0;
 
     return p;
@@ -37,17 +37,3 @@ int isAllIOQueuesEmpty(struct ProcessManager *manager){
     }
     return 0;
 }
-
-// unsigned int allocateMemoryToProcess( struct Queue *allocationPermited, struct Process *process ){
-//     if( isEmpty( allocationPermited ) ){
-//         printf("NECESSARIO SWAP!");
-//     }
-//     else{
-//         process->baseAddress = deQueue( allocationPermited );
-//     }
-// }
-
-// struct Process* generateProcess(int pid, int ppid, int priority, int burstTime){
-//     struct Process *process = createProcess(pid, ppid, priority, burstTime);
-//     return process;
-// }

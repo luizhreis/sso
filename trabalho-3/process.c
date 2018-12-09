@@ -10,12 +10,12 @@ struct Process{
     int pages;
     int workingSetLimit;
     int swapped;
+    unsigned int baseAddress;
     int *pageTable;
     int *valid;
     int *modified;
     int *lru;
     int *loaded;
-    unsigned int baseAddress;
 };
 
 struct Process *createProcess( int pid, int ppid, int priority, int arrivalTime, unsigned int maxProcessTime, unsigned int maxVirtualPages ){
@@ -63,7 +63,6 @@ void requestPage( struct Process *p , unsigned int *mainMemory, unsigned int *pi
         }
     }
     else{
-        // int pos = findLRU( p->lru, 4 );
         int last = 0, pos;
         for( int i = 0; i < 4; i++ ){
             if( p->lru[ i ] == -1 ){
@@ -86,6 +85,7 @@ void requestPage( struct Process *p , unsigned int *mainMemory, unsigned int *pi
         p->lru[ pos ] = 0;
         p->valid[ mem ] = 0;
         p->valid[ page - 1 ] = 1;
+        // printf("DEBUG: baseaddress = %d, pos = %d\n", p->baseAddress, pos);
         mainMemory[ p->baseAddress + pos ] = page;
         pidMemory[ p->baseAddress + pos ] = p->pid;
         p->pageTable[ page -1 ] = p->baseAddress + pos;
