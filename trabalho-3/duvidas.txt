@@ -1,1 +1,0 @@
-- O que acontece quando não é possível alocar PID? Apenas não cria o processo?

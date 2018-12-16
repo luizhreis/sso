@@ -234,13 +234,13 @@ int main(int argc, char **argv){
                     }
                 }
                 processRunning->state = 2;
-                logProcessStarted( processRunning->pid,simulationTime,processRunning->burstTime );
+                // logProcessStarted( processRunning->pid,simulationTime,processRunning->burstTime );
             }
             else if( !isEmpty( manager->lowPriorityQueue ) ){
                 pidRunning = deQueue( manager->lowPriorityQueue );
                 processRunning = manager->processList[ pidRunning->data ];
                 processRunning->state = 2;
-                logProcessStarted( processRunning->pid,simulationTime,processRunning->burstTime );
+                // logProcessStarted( processRunning->pid,simulationTime,processRunning->burstTime );
             }
         }
         if(!pidDiskRunning){
@@ -248,7 +248,7 @@ int main(int argc, char **argv){
                 pidDiskRunning = deQueue(manager->ioDisk);
                 processDiskRunning = manager->processList[pidDiskRunning->data];
                 partialDiskTime = 0;
-                logProcessStarted(pidDiskRunning->data,simulationTime,processDiskRunning->burstTime);
+                // logProcessStarted(pidDiskRunning->data,simulationTime,processDiskRunning->burstTime);
             }
         }
         if(!pidTapeRunning){
@@ -256,7 +256,7 @@ int main(int argc, char **argv){
                 pidTapeRunning = deQueue(manager->ioTape);
                 processTapeRunning = manager->processList[pidTapeRunning->data];
                 partialTapeTime = 0;
-                logProcessStarted(pidTapeRunning->data,simulationTime,processTapeRunning->burstTime);
+                // logProcessStarted(pidTapeRunning->data,simulationTime,processTapeRunning->burstTime);
             }
         }
         if(!pidPrinterRunning){
@@ -264,7 +264,7 @@ int main(int argc, char **argv){
                 pidPrinterRunning = deQueue(manager->ioPrinter);
                 processPrinterRunning = manager->processList[pidPrinterRunning->data];
                 partialPrinterTime = 0;
-                logProcessStarted(pidPrinterRunning->data,simulationTime,processPrinterRunning->burstTime);
+                // logProcessStarted(pidPrinterRunning->data,simulationTime,processPrinterRunning->burstTime);
             }
         }
         
@@ -298,7 +298,7 @@ int main(int argc, char **argv){
                     switch ( rand() % 3 ){
                         case 0:
                             /* fila do disco */
-                            fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET ": pid = %d\n", "Generated Disk I/O", processRunning->pid);
+                            // fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET ": pid = %d\n", "Generated Disk I/O", processRunning->pid);
                             enQueue( manager->ioDisk, processRunning->pid );
                             processRunning->state = 3;
                             processRunning = NULL;
@@ -307,7 +307,7 @@ int main(int argc, char **argv){
                             break;
                         case 1:
                             /* fila da fita */
-                            fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET ": pid = %d\n", "Generated Tape I/O", processRunning->pid);
+                            // fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET ": pid = %d\n", "Generated Tape I/O", processRunning->pid);
                             enQueue(manager->ioTape, processRunning->pid);
                             processRunning->state = 3;
                             processRunning = NULL;
@@ -316,7 +316,7 @@ int main(int argc, char **argv){
                             break;
                         case 2:
                             /* fila da impressora */
-                            fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET ": pid = %d\n", "Generated Printer I/O", processRunning->pid);
+                            // fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET ": pid = %d\n", "Generated Printer I/O", processRunning->pid);
                             enQueue(manager->ioPrinter, processRunning->pid);
                             processRunning->state = 3;
                             processRunning = NULL;
@@ -345,15 +345,15 @@ int main(int argc, char **argv){
             }
         }
         showMainMemory( mainMemory, pidMemory );
-        fprintf(stdout, C_BOLD "\n%s" C_RESET, "High Priority Queue:\t");
-        show(manager->highPriorityQueue);
-        fprintf(stdout, C_BOLD "%s" C_RESET, "Low Priority Queue:\t");
-        show(manager->lowPriorityQueue);
-        printf("\n");
+        // fprintf(stdout, C_BOLD "\n%s" C_RESET, "High Priority Queue:\t");
+        // show(manager->highPriorityQueue);
+        // fprintf(stdout, C_BOLD "%s" C_RESET, "Low Priority Queue:\t");
+        // show(manager->lowPriorityQueue);
+        // printf("\n");
         
         if(processDiskRunning != NULL){
             if(partialDiskTime < diskTime){
-                fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d\n", "I/O Disk Running", processDiskRunning->pid);
+                // fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d\n", "I/O Disk Running", processDiskRunning->pid);
                 partialDiskTime++;
             }
             else{
@@ -368,7 +368,7 @@ int main(int argc, char **argv){
         }
         if(processTapeRunning != NULL){
             if(partialTapeTime < tapeTime){
-                fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d\n", "I/O Tape Running", processTapeRunning->pid);
+                // fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d\n", "I/O Tape Running", processTapeRunning->pid);
                 partialTapeTime++;
             }
             else{
@@ -383,7 +383,7 @@ int main(int argc, char **argv){
         }
         if(processPrinterRunning != NULL){
             if(partialPrinterTime < printerTime){
-                fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d\n", "I/O Printer Running", processPrinterRunning->pid);
+                // fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d\n", "I/O Printer Running", processPrinterRunning->pid);
                 partialPrinterTime++;
             }
             else{
@@ -397,12 +397,12 @@ int main(int argc, char **argv){
             }
         }
 
-        fprintf(stdout, C_BOLD "\n%s" C_RESET, "I/O Printer Queue:\t");
-        show(manager->ioPrinter);
-        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Disk Queue:\t\t");
-        show(manager->ioDisk);
-        fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Tape Queue:\t\t");
-        show(manager->ioTape);
+        // fprintf(stdout, C_BOLD "\n%s" C_RESET, "I/O Printer Queue:\t");
+        // show(manager->ioPrinter);
+        // fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Disk Queue:\t\t");
+        // show(manager->ioDisk);
+        // fprintf(stdout, C_BOLD "%s" C_RESET, "I/O Tape Queue:\t\t");
+        // show(manager->ioTape);
         simulationTime++;
 
         if(newProcessCreation->data == -1 && !pidRunning && isAllExecutionQueuesEmpty(manager) && isAllIOQueuesEmpty(manager) && !pidDiskRunning && !pidPrinterRunning && !pidTapeRunning){

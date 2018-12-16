@@ -11,10 +11,10 @@ int createLogFile(char *outputFile){
     return 0;
 }
 
-int logProcessStarted(int pid, int simTime, int burstTime){
-    fprintf(PTR_LOGFILE,"PROCESS STARTED -- PID: %d, TIME: %d, Duration: %d\n",pid,simTime, burstTime);
-    return 0;
-}
+// int logProcessStarted(int pid, int simTime, int burstTime){
+//     fprintf(PTR_LOGFILE,"PROCESS STARTED -- PID: %d, TIME: %d, Duration: %d\n",pid,simTime, burstTime);
+//     return 0;
+// }
 
 int logProcessCreation(int arrivalTime, int pid, int burstTime, int ppid){
     fprintf(PTR_LOGFILE, "PROCESS CREATED -- PID: %d, Time: %d, Duration: %d, PPID: %d\n", arrivalTime, pid, burstTime, ppid);
