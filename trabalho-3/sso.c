@@ -185,23 +185,25 @@ int main(int argc, char **argv){
     printf("ESPAÇOS DISPONIVEIS: ");
     show( allocationPermited );
 
-    newProcessCreation = deQueue( processCreation );
+    // newProcessCreation = deQueue( processCreation );
+    newProcessCreation = newNode( 0 );
     for( int i = 0; i < 16; i++ )
         addressInUse[ i ] = 0;
 
     while( 1 ){
         system("clear");
         fprintf( stdout, C_YELLOW C_BOLD "%s" C_RESET ": %d\n", "Simulation Time", simulationTime );
-        while( newProcessCreation != NULL && newProcessCreation->data == simulationTime ){
-            generateProcess( manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages );
-            free( newProcessCreation );
-            newProcessCreation = deQueue( processCreation );
-            if( !newProcessCreation )
-                newProcessCreation = newNode( -1 );
-        }
-        // if( simulationTime % 3 == 0 ){
-        //     generateProcess(manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
+        // while( newProcessCreation != NULL && newProcessCreation->data == simulationTime ){
+        //     generateProcess( manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages );
+        //     free( newProcessCreation );
+        //     newProcessCreation = deQueue( processCreation );
+        //     if( !newProcessCreation )
+        //         newProcessCreation = newNode( -1 );
         // }
+        if( rand() % 2 ){
+            newProcessCreation->data = simulationTime;
+            generateProcess(manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
+        }
         if( !pidRunning ){
             if( !isEmpty( manager->highPriorityQueue ) ){
                 pidRunning = deQueue( manager->highPriorityQueue );
@@ -219,7 +221,9 @@ int main(int argc, char **argv){
                             }
                         }
                         processRunning->baseAddress = swap->baseAddress;
-                        processRunning->swapped = 0;
+                        processRunning->swapped = 0;                        
+                        for(int i = 0; i < 4; i++)
+                            mainMemory[ processRunning-> baseAddress + i ] = -1;
                         addressInUse[ processRunning->baseAddress / 4 ] += 1;
                         fprintf(stdout, C_CYAN C_BOLD "%s" C_RESET "pid = %d\n", "Swap in: ", processRunning->pid );
                     }
@@ -272,11 +276,12 @@ int main(int argc, char **argv){
             fprintf(stdout, C_YELLOW C_BOLD "%s" C_RESET ": pid = %d, execution time = %d, base address = %d\n", "Process Running", processRunning->pid, processRunning->burstTime, processRunning->baseAddress );
             partialTime++;
             processRunning->timeCount++;
-            //if ( (rand() % 10) <= 9 )//processRunning->timeCount % 3 == 0 ){
             requestPage( processRunning, mainMemory, pidMemory );
             showLRU( processRunning->lru, 4 );
             showPageTable( processRunning );
             if( processRunning->burstTime == 0 ){
+                for(int i = 0; i < 4; i++)
+                    mainMemory[ processRunning-> baseAddress + i ] = -1;
                 fprintf(stdout, C_RED C_BOLD "%s" C_RESET ": pid = %d, arrival time = %d\n", "Process Terminated", processRunning->pid, processRunning->arrivalTime);
                 logProcessTerminated( processRunning->pid, simulationTime );
                 addressInUse[ processRunning->baseAddress / 4 ] -= 1;
@@ -329,7 +334,8 @@ int main(int argc, char **argv){
                     // else{
                     //     enQueue(manager->lowPriorityQueue, processRunning->pid);
                     // }
-                    swap = processRunning;
+                    if( isEmpty( allocationPermited ) )
+                        swap = processRunning;
                     enQueue(manager->lowPriorityQueue, processRunning->pid);
                     logProcessPreempted(processRunning->pid, simulationTime);
                     processRunning->state = 1;
@@ -351,7 +357,8 @@ int main(int argc, char **argv){
                 partialDiskTime++;
             }
             else{
-                swap = processDiskRunning;
+                if( isEmpty( allocationPermited ) )
+                    swap = processDiskRunning;
                 enQueue(manager->lowPriorityQueue, pidDiskRunning->data);
                 processDiskRunning->state = 1;
                 partialDiskTime = 0;
@@ -365,6 +372,8 @@ int main(int argc, char **argv){
                 partialTapeTime++;
             }
             else{
+                if( isEmpty( allocationPermited ) )
+                    swap = processRunning;
                 enQueue(manager->highPriorityQueue, pidTapeRunning->data);
                 processTapeRunning->state = 1;
                 partialTapeTime = 0;
@@ -378,8 +387,9 @@ int main(int argc, char **argv){
                 partialPrinterTime++;
             }
             else{
-                swap = processPrinterRunning;
-                enQueue(manager->lowPriorityQueue, pidPrinterRunning->data);
+                if( isEmpty( allocationPermited ) )
+                    swap = processRunning;
+                enQueue(manager->highPriorityQueue, pidPrinterRunning->data);
                 processPrinterRunning->state = 1;
                 partialPrinterTime = 0;
                 processPrinterRunning = NULL;
