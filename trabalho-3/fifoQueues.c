@@ -69,8 +69,8 @@ int isEmpty(struct Queue *q){
     return ret;
 }
 
-void show(struct Queue *q){
-    if(isEmpty(q)){
+void show( struct Queue *q ){
+    if( isEmpty( q ) ){
         printf("Empty queue");
     } else {
         struct Node *temp = q->first;
@@ -81,4 +81,16 @@ void show(struct Queue *q){
         while(temp);
     }
     printf("\n");
+}
+
+struct Node *getLast( struct Queue *q ){
+    struct Node *last = newNode( -1 );
+    if( isEmpty( q ) )
+        return last;
+    else{
+        last = q->first;
+        while( last->next )
+            last = last->next;
+        return last;
+    }
 }
