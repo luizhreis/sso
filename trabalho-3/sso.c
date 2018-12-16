@@ -193,21 +193,21 @@ int main(int argc, char **argv){
     while( 1 ){
         system("clear");
         fprintf( stdout, C_YELLOW C_BOLD "%s" C_RESET ": %d\n", "Simulation Time", simulationTime );
-        // while( newProcessCreation != NULL && newProcessCreation->data == simulationTime ){
-        //     generateProcess( manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages );
-        //     free( newProcessCreation );
-        //     newProcessCreation = deQueue( processCreation );
-        //     if( !newProcessCreation )
-        //         newProcessCreation = newNode( -1 );
-        // }
+        while( newProcessCreation != NULL && newProcessCreation->data == simulationTime ){
+            generateProcess( manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages );
+            free( newProcessCreation );
+            newProcessCreation = deQueue( processCreation );
+            if( !newProcessCreation )
+                newProcessCreation = newNode( -1 );
+        }
         printf("ADRESS IN USE: ");
         for( int i = 0; i < 16; i++ )
             printf("%d ", addressInUse[ i ]);
         printf("\n");
-        if( rand() % 2 ){
-            newProcessCreation->data = simulationTime;
-            generateProcess(manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
-        }
+        // if( rand() % 2 ){
+        //     newProcessCreation->data = simulationTime;
+        //     generateProcess(manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
+        // }
         if( !pidRunning ){
             if( !isEmpty( manager->highPriorityQueue ) ){
                 pidRunning = deQueue( manager->highPriorityQueue );
