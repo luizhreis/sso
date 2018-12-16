@@ -182,8 +182,8 @@ int main(int argc, char **argv){
 
     initiateProcessManager( manager );
     initializeMainMemory( mainMemory, allocationPermited );
-    printf("ESPAÇOS DISPONIVEIS: ");
-    show( allocationPermited );
+    // printf("ESPAÇOS DISPONIVEIS: ");
+    // show( allocationPermited );
 
     // newProcessCreation = deQueue( processCreation );
     newProcessCreation = newNode( 0 );
@@ -200,10 +200,6 @@ int main(int argc, char **argv){
             if( !newProcessCreation )
                 newProcessCreation = newNode( -1 );
         }
-        printf("ADRESS IN USE: ");
-        for( int i = 0; i < 16; i++ )
-            printf("%d ", addressInUse[ i ]);
-        printf("\n");
         // if( rand() % 2 ){
         //     newProcessCreation->data = simulationTime;
         //     generateProcess(manager, 0, 0, simulationTime, maxProcess, maxProcessTime, maxVirtualPages);
@@ -212,7 +208,6 @@ int main(int argc, char **argv){
             if( !isEmpty( manager->highPriorityQueue ) ){
                 pidRunning = deQueue( manager->highPriorityQueue );
                 processRunning = manager->processList[ pidRunning->data ];
-                printf("PROCESS STATE: %d\n", processRunning->state);
                 if( processRunning->swapped || processRunning->state == 0 ){
                     if( isEmpty( allocationPermited ) ){
                         swap->swapped = 1;
